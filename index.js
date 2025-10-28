@@ -67,6 +67,10 @@ app.post('/signup', (req, res)=>{
 });
 
 
+app.get('/',(req, res)=>{
+    res.send('hello world, this is working.Good now we can proceed what to do now??')
+})
+
 app.get("/signup", (req,res)=>{
     res.render('signup', {title: 'Sign Up - Light Tracker'} )
 })

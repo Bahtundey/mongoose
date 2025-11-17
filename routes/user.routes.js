@@ -19,7 +19,7 @@ router.get('/dashboard', getDashboard );
 
 router.get('/', getHomePage);
 
-router.get('/signup', getSignup);
+// router.get('/signup', getSignup);
 
 router.get('/signin', getSignin);
 router.get('/musics', getMusicAPI)

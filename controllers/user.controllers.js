@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
-// const session = require('express-session');
 const nodemailer = require('nodemailer');
 const User = require('../models/user.models');
 const port = process.env.PORT || 3600;
@@ -86,7 +85,8 @@ const postSignup = (req, res) => {
                     console.log('Email sent:' + info.response)
                 }
             });
-            res.redirect('/user/signin');
+            // res.redirect('/user/signin');
+            res.status(201).json({success: true, message:'Sign up successful'});
         })
         .catch((err) => {
             if (err !== 'user already exists') {
@@ -123,8 +123,11 @@ const postSignin = (req, res) => {
                     };
 
                     console.log('User logged in successfully', user.firstname, user.lastname);
-                    res.redirect('/user/dashboard');
-                });
+                    // res.redirect('/user/dashboard');
+
+                    res.status(200).json({ success: true, message: 'Signin successful'
+                })
+        });
         })
         .catch((err) => {
             console.log('Login error:', err);
@@ -145,6 +148,41 @@ const getDashboard = (req, res) => {
 }
 
 
+const musicAPI = [
+    {id: 1, songTitle: 'gokada', songUrl: 'https://open.spotify.com/track/2aQcVp8NHhCOhgZh76k1Ui?si=9ff6ee72ff844442', songImg: 'https://share.google/images/ji3rbj8wJB7wl54Az', songArtist: 'Fola'},
+    {id: 2, songTitle: 'you', songUrl: 'https://open.spotify.com/track/6RW5AtwRPRc4C0j2EgCdTr?si=1b339696a2ba4735', songImg: 'https://share.google/images/8CQZJHqWohUO5exZX', songArtist: 'Fola'},
+    {id: 3, songTitle: 'lost', songUrl: 'https://open.spotify.com/track/2aQcVp8NHhCOhgZh76k1Ui?si=9ff6ee72ff844442', songImg: 'https://share.google/images/OuLndmp4v73EfEFcQ', songArtist: 'Fola,Kizz Daniel'},
+    {id: 4, songTitle: 'healer', songUrl: 'https://open.spotify.com/track/7q6EdEhPwkVfu4XGgP4kXV?si=bbc3017774e64e70', songImg: 'https://share.google/images/bjAO24A9kJ6M8TLTo', songArtist: 'Fola'},
+    {id: 5, songTitle: 'Guts Over Fear', songUrl: 'https://open.spotify.com/track/0VZs2OQq4axr8GFRdC9nyD?si=b0eaf268c0ca45ae', songImg: 'https://share.google/images/KR2pKeg21XdxPq7Pp', songArtist: 'Eminem, Sia'},
+    {id: 6, songTitle: 'No LOve', songUrl: 'https://open.spotify.com/track/3h6WizK7Qtac8KdyfjaUTR?si=142587b209c24852', songImg: 'https://share.google/images/EOio8BMS8Y8MyJKw8', songArtist: 'Eminem, Lil Wayne'},
+    {id: 7, songTitle: 'Be With You', songUrl: 'https://open.spotify.com/track/5fFVy5lNikE6Gls8qKLS5L?si=16c4e3d20884472f', songImg: 'https://share.google/images/IOOxNdERNmWpxAq12', songArtist: 'Akon'},
+    {id: 8, songTitle: 'Birthmark', songUrl: 'https://open.spotify.com/track/3XJDtvp6AvCsuqyHCTMeo8?si=af76b06f93754b52', songImg: 'https://share.google/images/jUkeGxAkvxnKR3y10', songArtist: 'Akon'},
+    {id: 9, songTitle: 'Bag Blood', songUrl: 'https://open.spotify.com/track/6xsEAm6w9oMQYYg3jkEkMT?si=e7595df3759c4db0', songImg: 'https://share.google/images/7TIDoweacuWYRkYQJ', songArtist: 'Taylor Swift, Kendrick Lamar'},
+    {id: 10, songTitle: 'Miss My Dogs', songUrl: 'https://open.spotify.com/track/3G6aAx6mbI8QXVHtICvWSg?si=f83638273f3646d5', songImg: 'https://share.google/images/cKi0bsHdKbzg3iw9H', songArtist: 'Young Thug'},
+    {id: 11, songTitle: 'California Breeze', songUrl: 'https://open.spotify.com/track/6ug9fUi5oLLgQgOF1G8WkM?si=3f647393fa4a4bbb', songImg: 'https://share.google/images/8zBFxtvSkDDz73jt7', songArtist: 'Lil Baby'},
+    {id: 12, songTitle: 'wgft', songUrl: 'https://open.spotify.com/track/0WsC4ETIXyiHDMXRaPMvKe?si=dd0a3a35e41b4095', songImg: 'https://share.google/images/DmKv8zOzDymJQHrzW', songArtist: 'Gunna, Burna Boy'},
+    {id: 13, songTitle: '28 Grams', songUrl: 'https://open.spotify.com/track/5XHZWCpKc4XJghIYi8uHgi?si=75be2345f51747cd', songImg: 'https://share.google/images/mTJuFLx0aI6F5hh10', songArtist: 'Burna Boy'},
+    {id: 14, songTitle: 'Aduni', songUrl: 'https://open.spotify.com/track/07oWoYAboy2uZhDb0EMvge?si=83f0f215d8964fb6', songImg: 'hhttps://share.google/images/ghNmslFwJwWAZ3v3n', songArtist: 'Rybeena'},
+    {id: 15, songTitle: 'Tony Montola', songUrl: 'https://open.spotify.com/track/7wnsInSkMr5dwK2snGfT4R?si=182a1c5618a0490a', songImg: 'https://share.google/images/JSnkZu7wtzlaDipoU', songArtist: 'Young John'}
+]
+
+const getMusicAPI = (req, res) => {
+    res.json(musicAPI);
+}
+
+let allStudents = [
+    {name: "felix", age: 50, accountBalance: 20000, course: 'software engineer'},
+    {name: "dayo", age: 50, accountBalance: 50000, course: 'survey engineer'},
+    {name: "deji", age: 50, accountBalance: 20000, course: 'data analyst'},
+    {name: "tunji", age: 50, accountBalance: 20000, course: 'devop'},
+    {name: "tunde", age: 50, accountBalance: 20000, course: 'graphics designer'},
+    {name: "sele", age: 50, accountBalance: 20000, course: 'ai'},
+    {name: "bayo", age: 50, accountBalance: 20000, course: 'cyber security'},
+]
+
+const getAllStudents = (req, res) => {
+    res.json(allStudents);
+}
 
 
 module.exports = {
@@ -153,5 +191,7 @@ module.exports = {
     getSignin,
     getDashboard,
     postSignup,
-    postSignin
+    postSignin,
+    getMusicAPI,
+    getAllStudents
 }

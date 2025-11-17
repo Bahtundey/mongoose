@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3600; 
-const ejs = require('ejs');
+// const ejs = require('ejs');
 const dotenv = require('dotenv');
 dotenv.config();
 const mongoose = require('mongoose');
@@ -12,9 +12,17 @@ const nodemailer = require('nodemailer');
 const session = require('express-session');
 const User = require('./models/user.models');
 const userRoutes = require('./routes/user.routes');
+const cors = require('cors');
 
 
-app.set('view engine', 'ejs');
+app.use(cors({
+  origin: 'https://secondreactclass-o7w5.vercel.app/',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
+
+
+// app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -26,6 +34,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false } 
 }));
+
 app.use('/user', userRoutes);
 
 mongoose.connect(MongoDB_URI)

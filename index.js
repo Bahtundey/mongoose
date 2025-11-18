@@ -16,7 +16,7 @@ const cors = require('cors');
 
 
 app.use(cors({
-  origin: 'https://secondreactclass-o7w5.vercel.app',
+  origin: 'https://secondreactclass.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));

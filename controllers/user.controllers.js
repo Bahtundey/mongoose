@@ -67,7 +67,8 @@ const postSignup = (req, res) => {
               <p>Here are some quick links to get you started:</p>
               <ul>
                 <li><a href="http://localhost:${port}/signin" style="color: #4CAF50; text-decoration: none;">Sign In</a></li>
-                <li><a href="http://localhost:${port}/dashboard" style="color: #4CAF50; text-decoration: none;">Visit Dashboard</a></li>
+                <li><a href="https://mongoose-sgu0.onrender.com/dashboard
+                " style="color: #4CAF50; text-decoration: none;">Visit Dashboard</a></li>
               </ul>
               <p>If you have any questions, feel free to reply to this email. We're here to help!</p>
               <p>Best regards,</p>
@@ -100,45 +101,46 @@ const postSignup = (req, res) => {
 const getSignin = (req, res) => {
     res.render('signin', { title: 'Sign In - Light Tracker' });
 }
-const postSignin = (req, res) => {
+const postSignin = async (req, res) => {
     const { email, password } = req.body;
 
+    try {
+        const user = await User.findOne({ email });
 
-    User.findOne({ email })
-        .then((user) => {
-            if (!user) {
-                return res.status(400).send('Invalid email or password');
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid email or password" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Invalid email or password" });
+        }
+
+        // Create JWT token
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Signin successful",
+            token,
+            user: {
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email
             }
-
-
-            return bcrypt.compare(password, user.password)
-                .then((isMatch) => {
-                    if (!isMatch) {
-                        return res.status(400).send('Invalid email or password');
-                    }
-
-                    req.session.user = {
-                        firstname: user.firstname,
-                        lastname: user.lastname,
-                        email: user.email
-                    };
-
-                    console.log('User logged in successfully', user.firstname, user.lastname);
-                    // res.redirect('/user/dashboard');
-
-                    res.status(200).json({ success: true, message: 'Signin successful'})
-                    const token = jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});  
-                    console.log(token)
-
-                    res.status(200).json({ success: true, message: 'Signin successful', token, user: req.session.user });
-                
         });
-        })
-        .catch((err) => {
-            console.log('Login error:', err);
-            res.status(500).send('Internal server error');
-        });
-}
+
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 const getDashboard = (req, res) => {
     const user = req.session.user;
     if (!user) {

@@ -129,6 +129,8 @@ const postSignin = (req, res) => {
                     res.status(200).json({ success: true, message: 'Signin successful'})
                     const token = jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});  
                     console.log(token)
+
+                    res.status(200).json({ success: true, message: 'Signin successful', token, user: req.session.user });
                 
         });
         })

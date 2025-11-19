@@ -3,6 +3,7 @@ const saltRounds = 10;
 const nodemailer = require('nodemailer');
 const User = require('../models/user.models');
 const port = process.env.PORT || 3600;
+const jwt = require('jsonwebtoken');
 
 
 const getHomePage = (req, res) => {
@@ -125,8 +126,10 @@ const postSignin = (req, res) => {
                     console.log('User logged in successfully', user.firstname, user.lastname);
                     // res.redirect('/user/dashboard');
 
-                    res.status(200).json({ success: true, message: 'Signin successful'
-                })
+                    res.status(200).json({ success: true, message: 'Signin successful'})
+                    const token = jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});  
+                    console.log(token)
+                
         });
         })
         .catch((err) => {

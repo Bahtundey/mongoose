@@ -15,6 +15,7 @@ const userRoutes = require('./routes/user.routes');
 const cors = require('cors');
 
 
+
 app.use(cors({
   origin: 'https://secondreactclass.vercel.app', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
